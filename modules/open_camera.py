@@ -39,3 +39,4 @@ def open_camera():
         
     except Exception as e:
         return f"Error opening camera: {str(e)}"
+    

@@ -3,18 +3,47 @@ import webbrowser
 from modules.open_camera import open_camera
 from modules.get_time_date import get_time, get_date
 from modules.open_website import open_website
-
-def handle_command(command):
-    """
-    Process user commands and execute appropriate actions
-    
-    Args:
-        command (str): User voice command
+def process_command(query):
+    if not query:
+        return True
+    try:
+        if 'time' in query:
+            ...
         
-    Returns:
-        str: Response message or None
-    """
-    command = command.lower()
+        elif 'date' in query:
+            ...
+
+        elif 'hello' in query or 'hi' in query:
+            speak("Hello! How can I assist you?")
+
+        elif "open" in query:
+            speak(universal_open(query))
+        
+        elif "capture photo" in query or "take photo" in query:
+            from modules.open_camera import capture_photo
+            speak("Capturing photo")
+            speak(capture_photo())
+
+        elif "record video" in query:
+            from modules.open_camera import record_video
+            speak("Recording video for five seconds")
+            speak(record_video(5))
+        
+        elif "switch camera" in query:
+            from modules.open_camera import switch_camera, open_camera
+            camera_id = switch_camera(0)
+            speak("Switching camera")
+            speak(open_camera(camera_id))
+
+        elif 'quit' in query or 'exit' in query or 'bye' in query:
+            speak("Goodbye! Have a wonderful day!")
+            return False
+
+        else:
+            speak(f"You said: {query}. I'm still learning to handle this command.")
+
+        return True
+
     
     # Exit commands
     if 'exit' in command or 'quit' in command or 'bye' in command or 'stop' in command:
@@ -80,3 +109,6 @@ def handle_command(command):
     # Unknown command
     else:
         return "Sorry, I didn't understand that command. Please try again."
+
+
+

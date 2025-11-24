@@ -2,8 +2,13 @@ import speech_recognition as sr
 import pyttsx3
 import datetime
 import sys
+import webbrowser
+import os
+import subprocess
 
-# Initialize text-to-speech
+# ---------------------------------------------------------
+#  TEXT-TO-SPEECH
+# ---------------------------------------------------------
 try:
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
@@ -15,7 +20,6 @@ except Exception as e:
     engine = None
 
 def speak(text):
-    """Convert text to speech"""
     if engine:
         try:
             engine.say(text)
@@ -24,151 +28,187 @@ def speak(text):
             print(f"Speech error: {e}")
     print(f"EVA: {text}")
 
+# ---------------------------------------------------------
+#  LISTEN FUNCTION
+# ---------------------------------------------------------
 def listen():
-    """Listen using sounddevice backend (No PyAudio needed!)"""
     recognizer = sr.Recognizer()
-    
-    # Use sounddevice as microphone backend
+
     try:
         with sr.Microphone() as source:
             print("\n🎤 Listening... (Speak now)")
             recognizer.adjust_for_ambient_noise(source, duration=0.5)
             recognizer.pause_threshold = 1
-            
+
             try:
                 audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)
                 print("🔍 Recognizing...")
                 query = recognizer.recognize_google(audio, language='en-US')
                 print(f"✓ You said: {query}\n")
                 return query.lower()
+
             except sr.WaitTimeoutError:
                 return ""
             except sr.UnknownValueError:
                 print("❌ Could not understand audio")
                 return ""
             except sr.RequestError as e:
-                print(f"❌ Recognition service error: {e}")
+                print(f"❌ Recognition error: {e}")
                 return ""
+
     except Exception as e:
         print(f"❌ Microphone error: {e}")
-        print("\nTroubleshooting:")
-        print("1. Check if microphone is connected")
-        print("2. Grant microphone permissions to Python")
-        print("3. Try: pip install --upgrade sounddevice")
         return ""
 
+# ---------------------------------------------------------
+#  GREETING
+# ---------------------------------------------------------
 def greet_user():
-    """Greet based on time"""
     hour = datetime.datetime.now().hour
-    
-    if 0 <= hour < 12:
-        greeting = "Good Morning!"
-    elif 12 <= hour < 18:
-        greeting = "Good Afternoon!"
-    else:
-        greeting = "Good Evening!"
-    
-    speak(greeting)
-    speak("I am EVA, your voice assistant. How can I help you?")
 
+    if 0 <= hour < 12:
+        greet = "Good Morning!"
+    elif 12 <= hour < 18:
+        greet = "Good Afternoon!"
+    else:
+        greet = "Good Evening!"
+
+    speak(greet)
+    speak("I am EVA, your assistant. How can I help you?")
+
+# ---------------------------------------------------------
+#  UNIVERSAL OPEN COMMAND (VERY IMPORTANT)
+# ---------------------------------------------------------
+def universal_open(query):
+    query = query.lower()
+
+    # ---------- OPEN CAMERA ----------
+    if "camera" in query:
+        from modules.open_camera import open_camera
+        return open_camera()
+
+    # ---------- POPULAR WEBSITES ----------
+    websites = {
+        "youtube": "https://www.youtube.com",
+        "google": "https://www.google.com",
+        "instagram": "https://www.instagram.com",
+        "facebook": "https://www.facebook.com",
+        "flipkart": "https://www.flipkart.com",
+        "linkedin": "https://www.linkedin.com",
+        "github": "https://github.com",
+        "chatgpt": "https://chat.openai.com"
+    }
+
+    for name, url in websites.items():
+        if name in query:
+            webbrowser.open(url)
+            return f"Opening {name}"
+
+    # ---------- ANY WEBSITE URL ----------
+    if ".com" in query or ".in" in query or ".org" in query:
+        url = query.replace("open", "").strip()
+        if not url.startswith("http"):
+            url = "https://" + url
+        webbrowser.open(url)
+        return "Opening website"
+
+    # ---------- WINDOWS APPS ----------
+    apps = {
+        "notepad": "notepad.exe",
+        "calculator": "calc.exe",
+        "paint": "mspaint.exe",
+        "command prompt": "cmd.exe",
+        "control panel": "control.exe"
+    }
+
+    for name, exe in apps.items():
+        if name in query:
+            subprocess.Popen(exe)
+            return f"Opening {name}"
+
+    # ---------- FOLDERS ----------
+    folders = {
+        "downloads": os.path.expanduser("~/Downloads"),
+        "documents": os.path.expanduser("~/Documents"),
+        "desktop": os.path.expanduser("~/Desktop"),
+        "pictures": os.path.expanduser("~/Pictures")
+    }
+
+    for name, path in folders.items():
+        if name in query:
+            os.startfile(path)
+            return f"Opening {name} folder"
+
+    return "Sorry, I don't know how to open that."
+
+# ---------------------------------------------------------
+#  PROCESS COMMAND
+# ---------------------------------------------------------
 def process_command(query):
-    """Process user commands"""
     if not query:
         return True
-    
+
     try:
-        if 'time' in query:
-            current_time = datetime.datetime.now().strftime("%I:%M %p")
-            speak(f"The time is {current_time}")
-        
-        elif 'date' in query:
-            current_date = datetime.datetime.now().strftime("%B %d, %Y")
-            speak(f"Today is {current_date}")
-        
-        elif 'hello' in query or 'hi' in query:
-            speak("Hello! How can I assist you?")
-        
-        elif 'how are you' in query:
-            speak("I'm doing great, thank you for asking!")
-        
-        elif 'your name' in query or 'who are you' in query:
-            speak("I am EVA, your Enhanced Voice Assistant")
-        
-        elif 'quit' in query or 'exit' in query or 'bye' in query or 'goodbye' in query:
-            speak("Goodbye! Have a wonderful day!")
-            return False
-            # ----- OPEN ANY WEBSITE -----
-        
-        elif "open youtube" in query:
-            from modules.open_website import open_website
-            speak(open_website("youtube.com", "YouTube"))
-        
-        elif "open google" in query:
-            from modules.open_website import open_website
-            speak(open_website("google.com", "Google"))
+        # TIME
+        if "time" in query:
+            speak("The time is " + datetime.datetime.now().strftime("%I:%M %p"))
 
-        elif "open instagram" in query:
-            from modules.open_website import open_website
-            speak(open_website("instagram.com", "Instagram"))
+        # DATE
+        elif "date" in query:
+            speak("Today's date is " + datetime.datetime.now().strftime("%B %d, %Y"))
 
-        elif "open linkedin" in query:
-            from modules.open_website import open_website
-            speak(open_website("in.linkedin.com", "linkedin"))
-        
-        elif "open flipkart" in query:
-            from modules.open_website import open_website
-            speak(open_website("flipkart.com", "flipkart"))
-        
-        elif "open camera" in query:
-            from modules.open_camera import open_camera
-            speak("Opening camera")
-            speak(open_camera())
+        # GREETINGS
+        elif "hello" in query or "hi" in query:
+            speak("Hello! How can I help you?")
 
+        # UNIVERSAL OPEN COMMAND 🚀
+        elif "open" in query:
+            speak(universal_open(query))
+
+        # CAPTURE PHOTO
         elif "capture photo" in query or "take photo" in query:
             from modules.open_camera import capture_photo
-            speak("Capturing photo")
+            speak("Capturing photo...")
             speak(capture_photo())
-        
-        # ----- RECORD VIDEO -----
+
+        # RECORD VIDEO
         elif "record video" in query:
             from modules.open_camera import record_video
-            speak("Recording video for five seconds")
+            speak("Recording video for five seconds...")
             speak(record_video(5))
-        # ----- SWITCH CAMERA -----
+
+        # SWITCH CAMERA
         elif "switch camera" in query:
             from modules.open_camera import switch_camera, open_camera
-            camera_id = switch_camera(0)  # simple example
+            new_cam = switch_camera(0)
             speak("Switching camera")
-            speak(open_camera(camera_id))
-        
+            speak(open_camera(new_cam))
+
+        # EXIT
+        elif "bye" in query or "quit" in query or "exit" in query:
+            speak("Goodbye! Have a great day!")
+            return False
+
         else:
-            speak(f"You said: {query}. I'm still learning to handle this command.")
-        
-        return True
-    
-    except Exception as e:
-        print(f"Command processing error: {e}")
-        speak("Sorry, I encountered an error")
+            speak(f"You said: {query}. I am still learning that command.")
+
         return True
 
-def main():
-    """Main EVA function"""
-    print("=" * 60)
-    print("          EVA - Enhanced Voice Assistant (Python 3.14)")
-    print("=" * 60)
-    print("\nInitializing...")
-    
-    # Test microphone availability
-    try:
-        import sounddevice as sd
-        devices = sd.query_devices()
-        print(f"✓ Found {len(devices)} audio devices")
     except Exception as e:
-        print(f"⚠ Warning: Could not query audio devices: {e}")
-    
+        print(f"Command error: {e}")
+        speak("Sorry, I encountered an error.")
+        return True
+
+# ---------------------------------------------------------
+#  MAIN
+# ---------------------------------------------------------
+def main():
+    print("=" * 60)
+    print("          EVA - Enhanced Voice Assistant")
+    print("=" * 60)
+
     greet_user()
-    print("\n💡 Try saying: 'What time is it?' or 'Hello' or 'Goodbye'\n")
-    
+
     while True:
         query = listen()
         if query:
@@ -179,9 +219,9 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\n👋 EVA shutting down...")
+        print("\nEVA shutting down...")
         speak("Goodbye!")
         sys.exit(0)
     except Exception as e:
-        print(f"\n❌ Fatal error: {e}")
+        print(f"Fatal error: {e}")
         sys.exit(1)

@@ -14,7 +14,7 @@ try:
     print(f"  Found {len(devices)} audio devices")
 except Exception as e:
     print(f"✗ sounddevice error: {e}")
-
+ 
 # Test 2: SpeechRecognition
 try:
     import speech_recognition as sr

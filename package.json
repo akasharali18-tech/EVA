@@ -1,0 +1,38 @@
+
+{
+    "name": "eva-desktop-assistant",
+  "version": "1.0.0",
+  "description": "EVA - Offline Voice-Controlled Desktop Assistant",
+  "main": "electron.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "package": "electron-builder"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.0",
+    "lucide-react": "^0.263.1"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0",
+    "react-scripts": "5.0.1"
+  },
+  "build": {
+    "appId": "com.eva.assistant",
+    "productName": "EVA Assistant",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "build/**/*",
+      "electron.js"
+    ]
+  }
+}

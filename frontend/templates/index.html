@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVA - Voice Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="robot-icon">🤖</span>
+                <h1>EVA</h1>
+            </div>
+            <div class="status" id="status">
+                <span class="status-dot inactive"></span>
+                <span id="status-text">INACTIVE</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Area -->
+            <div class="chat-container" id="chat-container">
+                <div class="message bot-message">
+                    <span class="message-sender">EVA:</span>
+                    <span class="message-text">Hello! I'm EVA. Click the microphone to activate me.</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="btn btn-primary" id="activate-btn" onclick="toggleActivation()">
+                    <span class="btn-icon">🎤</span>
+                    ACTIVATE EVA
+                </button>
+                <button class="btn btn-secondary" onclick="openManualInput()">
+                    <span class="btn-icon">⌨️</span>
+                    MANUAL
+                </button>
+                <button class="btn btn-secondary" onclick="clearChat()">
+                    <span class="btn-icon">🗑️</span>
+                    CLEAR
+                </button>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>EVA v1.0 | Offline Voice Assistant</p>
+        </footer>
+    </div>
+
+    <!-- Manual Input Modal -->
+    <div class="modal" id="manual-modal">
+        <div class="modal-content">
+            <h2>Manual Command Input</h2>
+            <input type="text" id="manual-input" placeholder="Enter your command..." />
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="submitManualCommand()">Execute</button>
+                <button class="btn btn-secondary" onclick="closeManualInput()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+# ============================
+# PYTHON IGNORE
+# ============================
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+eva_env/
+venv/
+env/
+*.venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+*.log
+logs/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Sensitive config
+*.env
+config.json
+secret.json
+
+# Audio/Video artifacts from camera module
+*.wav
+*.mp3
+*.mp4
+*.avi
+*.jpg
+*.jpeg
+*.png
+
+# PyAudio wheels / installer files
+*.whl
+*.tar.gz
+*.zip
+
+# Flask / SocketIO caches
+instance/
+*.pid
+
+# Temporary files
+tmp/
+temp/
+*.tmp

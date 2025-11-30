@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVA - Voice Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body class="dark-mode">
+    <!-- Notification Toast -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="robot-icon">🤖</span>
+                <div>
+                    <h1>EVA</h1>
+                    <p class="subtitle">Electronic Voice Assistant</p>
+                </div>
+            </div>
+            <div class="status-section">
+                <div class="status" id="status">
+                    <span class="status-dot inactive" id="status-dot"></span>
+                    <span id="status-text">INACTIVE</span>
+                </div>
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">
+                    <span class="theme-icon" id="theme-icon">🌙</span>
+                </button>
+                <button class="settings-btn" onclick="toggleSettings()" title="Settings">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Area -->
+            <div class="chat-container" id="chat-container">
+                <div class="welcome-message">
+                    <div class="welcome-icon">👋</div>
+                    <h2>Hello! I'm EVA</h2>
+                    <p>Your Offline Voice Assistant</p>
+                    <div class="feature-pills">
+                        <span class="pill">🎤 Voice Commands</span>
+                        <span class="pill">⌨️ Text Input</span>
+                        <span class="pill">🔒 Offline</span>
+                    </div>
+                    <p class="hint">Type a message or click the microphone to start...</p>
+                </div>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="chat-input" 
+                        placeholder="Type your command or ask something..."
+                        autocomplete="off"
+                    />
+                    <button class="voice-btn" id="voice-btn" onclick="toggleVoiceInput()" title="Voice Input">
+                        <span class="mic-icon">🎤</span>
+                    </button>
+                    <button class="send-btn" onclick="sendMessage()" title="Send">
+                        <span class="send-icon">➤</span>
+                    </button>
+                </div>
+                <div class="input-footer">
+                    <span class="quick-action" onclick="quickCommand('open youtube')">📺 YouTube</span>
+                    <span class="quick-action" onclick="quickCommand('open google')">🔍 Google</span>
+                    <span class="quick-action" onclick="quickCommand('what time')">🕐 Time</span>
+                    <span class="quick-action" onclick="quickCommand('open calculator')">🧮 Calculator</span>
+                    <button class="clear-btn-small" onclick="clearChat()">🗑️</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settings-panel">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h3>⚙️ Settings</h3>
+                    <button class="close-settings-x" onclick="toggleSettings()">✕</button>
+                </div>
+                
+                <div class="setting-group">
+                    <h4>Appearance</h4>
+                    <div class="setting-item">
+                        <label>Dark Mode</label>
+                        <label class="switch">
+                            <input type="checkbox" id="dark-mode-toggle" checked onchange="toggleTheme()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h4>Voice</h4>
+                    <div class="setting-item">
+                        <label>Voice Response</label>
+                        <label class="switch">
+                            <input type="checkbox" id="voice-response-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h4>Interface</h4>
+                    <div class="setting-item">
+                        <label>Auto-scroll</label>
+                        <label class="switch">
+                            <input type="checkbox" id="auto-scroll-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>Sound Effects</label>
+                        <label class="switch">
+                            <input type="checkbox" id="sound-effects-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>Notifications</label>
+                        <label class="switch">
+                            <input type="checkbox" id="notifications-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="close-settings" onclick="toggleSettings()">Close</button>
+            </div>
+        </div>
+
+        <!-- Listening Indicator -->
+        <div class="listening-indicator" id="listening-indicator">
+            <div class="listening-animation">
+                <span class="wave"></span>
+                <span class="wave"></span>
+                <span class="wave"></span>
+            </div>
+            <p>Listening...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

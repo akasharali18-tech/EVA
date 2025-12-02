@@ -50,10 +50,20 @@ socket.on('activated', () => {
 });
 
 socket.on('deactivated', () => {
-    console.log('🛑 Voice mode deactivated');
+    console.log('🛑 Voice mode deactivated (from server)');
+    
+    // Just update local state & UI, do NOT emit again
+    isVoiceActive = false;
+    
+    const voiceBtn = document.getElementById('voice-btn');
+    const listeningIndicator = document.getElementById('listening-indicator');
+    
+    if (voiceBtn) voiceBtn.classList.remove('active');
+    if (listeningIndicator) listeningIndicator.classList.remove('active');
+    
     updateStatus(false);
-    stopVoiceInput();
 });
+
 
 socket.on('error', (error) => {
     console.error('❌ Socket error:', error);
@@ -145,16 +155,29 @@ function startVoiceInput() {
     showNotification('Voice Active', 'Speak your command now', 'info');
 }
 
+// function stopVoiceInput() {
+//     console.log('⏹️ Stopping voice input...');
+//     isVoiceActive = false;
+//     const voiceBtn = document.getElementById('voice-btn');
+//     const listeningIndicator = document.getElementById('listening-indicator');
+    
+//     voiceBtn.classList.remove('active');
+//     listeningIndicator.classList.remove('active');
+    
+//     // Emit deactivate event to backend
+//     socket.emit('deactivate');
+// }
 function stopVoiceInput() {
-    console.log('⏹️ Stopping voice input...');
+    console.log('⏹️ Stopping voice input (user request)...');
     isVoiceActive = false;
     const voiceBtn = document.getElementById('voice-btn');
     const listeningIndicator = document.getElementById('listening-indicator');
     
-    voiceBtn.classList.remove('active');
-    listeningIndicator.classList.remove('active');
+    if (voiceBtn) voiceBtn.classList.remove('active');
+    if (listeningIndicator) listeningIndicator.classList.remove('active');
     
-    // Emit deactivate event to backend
+    // This should only be called from user actions / disconnect,
+    // NOT from the 'deactivated' socket event.
     socket.emit('deactivate');
 }
 

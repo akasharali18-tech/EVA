@@ -147,6 +147,7 @@ def handle_manual_command(data):
             return
         
         print(f"⌨️ Manual command: {command}")
+        print("⏳ No speech detected or not understood, continuing...")
         
         # Echo command to frontend
         emit('command_received', {'command': command})
